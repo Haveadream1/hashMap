@@ -1,8 +1,8 @@
 export default class HashMap {
-    constructor(capacity = 16){
+    constructor(capacity = 16) {
         this.loadFactor = 0.75;
         this.capacity = capacity;
-        this.table = new Array(capacity);
+        this.table = new Array(capacity).fill(null);
     }
 
     hash(key) {
@@ -13,7 +13,7 @@ export default class HashMap {
         for (let i = 0; i < key.length; i++) {
             hashCode = primeNumber * hashCode + key.charCodeAt(i);
         }
-        return hashCode;
+        return hashCode % this.capacity;
     }
 
     set(key, value) {
@@ -28,7 +28,7 @@ export default class HashMap {
         // takes one argument as a key and returns the value that is assigned to this key. If a key is not found, return null.
 
         const index = this.hash(key);
-        if (this.table[index] === undefined) {
+        if (!this.table[index]) {
             return null;
         } else {
             return this.table[index];
@@ -38,7 +38,7 @@ export default class HashMap {
     has(key) {
         // takes a key as an argument and returns true or false based on whether or not the key is in the hash map.
         const index = this.hash(key);
-        if (this.table[index] === undefined) {
+        if (!this.table[index]) {
             return false;
         } else {
             return true;
@@ -50,7 +50,7 @@ export default class HashMap {
         // If the key isn’t in the hash map, it should return false.
 
         const index = this.hash(key);
-        if (this.table[index] === undefined) {
+        if (!this.table[index]) {
             return false;
         } else {
             delete this.table[index];
@@ -61,34 +61,27 @@ export default class HashMap {
     length() {
         // returns the number of stored keys in the hash map.
         let count = 0;
-        for (let i = 0; i < this.capacity; i++) {
-            let entry = this.table[i]
-            if (entry !== null) {
+        for (let i = 0; i < this.table.length; i++) {
+            if (this.table[i] !== null && this.table[i] !== undefined) {
                 count++;
             }
         }
         return count;
-
-        // let count = 0;
-        // for (let i = 0; i < this.table.length; i++) {
-        //     if (this.table[i] !== undefined) {
-        //         count++;
-        //         console.log(this.table[i], count);
-        //     }
-        // }
-        // return count;
     } 
 
     clear() {
         // removes all entries in the hash map.
-        this.map = [];
+        this.table = new Array(this.capacity);
     } 
 
     keys() {
         // returns an array containing all the keys inside the hash map.
         let array = [];
-        for (let i = 0; i < this.map.length; i++) {
-            array.push(this.map[i][0]);
+        for (let i = 0; i < this.table.length; i++) {
+            if (this.table[i] !== null && this.table[i] !== undefined) {
+                let index = this.hash(this.table[i]);
+                array.push(index);
+            }
         }
         return array;
     } 
@@ -96,8 +89,10 @@ export default class HashMap {
     values() {
         // returns an array containing all the values.
         let array = [];
-        for (let i = 0; i < this.map.length; i++) {
-            array.push(this.map[i][1]);
+        for (let i = 0; i < this.table.length; i++) {
+            if (this.table[i] !== null && this.table[i] !== undefined) {
+                array.push(this.table[i]);
+            }
         }
         return array;
     } 
@@ -106,11 +101,11 @@ export default class HashMap {
         // returns an array that contains each key, value pair. Example: [[firstKey, firstValue], [secondKey, secondValue]] 
         let array = [];
         for (let i = 0; i < this.table.length; i++) {
-            if (this.table[i] !== undefined) {
-                array.push(this.table[i]);
+            if (this.table[i] !== null && this.table[i] !== undefined) {
+                let index = this.hash(this.table[i]);
+                array.push(`[${index}, ${this.table[i]}]`);
             }
         }
         return array;
-    } 
+    }
 }
-

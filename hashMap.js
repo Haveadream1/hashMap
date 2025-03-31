@@ -1,6 +1,8 @@
 export default class HashMap {
-    constructor(){
-        this.map = [];
+    constructor(capacity = 16){
+        this.loadFactor = 0.75;
+        this.capacity = capacity;
+        this.table = new Array(capacity);
     }
 
     hash(key) {
@@ -11,7 +13,6 @@ export default class HashMap {
         for (let i = 0; i < key.length; i++) {
             hashCode = primeNumber * hashCode + key.charCodeAt(i);
         }
-        
         return hashCode;
     }
 
@@ -20,26 +21,24 @@ export default class HashMap {
         // If a key already exists, then the old value is overwritten, and we can say that we update the key’s value
 
         const index = this.hash(key);
-        this.map[index] = [key, value];
+        this.table[index] = value;
     } 
 
     get(key) {
         // takes one argument as a key and returns the value that is assigned to this key. If a key is not found, return null.
 
         const index = this.hash(key);
-        const map = this.map[index];
-        if (map[0] === undefined) {
+        if (this.table[index] === undefined) {
             return null;
         } else {
-            return map[1];
+            return this.table[index];
         }
     } 
 
     has(key) {
         // takes a key as an argument and returns true or false based on whether or not the key is in the hash map.
         const index = this.hash(key);
-        const map = this.map[index];
-        if (map[0] === undefined) {
+        if (this.table[index] === undefined) {
             return false;
         } else {
             return true;
@@ -51,11 +50,10 @@ export default class HashMap {
         // If the key isn’t in the hash map, it should return false.
 
         const index = this.hash(key);
-        const map = this.map[index];
-        if (map[0] === undefined) {
+        if (this.table[index] === undefined) {
             return false;
         } else {
-            this.map[index] = undefined;
+            delete this.table[index];
             return true;
         }
     } 
@@ -63,25 +61,56 @@ export default class HashMap {
     length() {
         // returns the number of stored keys in the hash map.
         let count = 0;
-        while (this.map[count] !== undefined) {
-            count++;
+        for (let i = 0; i < this.capacity; i++) {
+            let entry = this.table[i]
+            if (entry !== null) {
+                count++;
+            }
         }
         return count;
+
+        // let count = 0;
+        // for (let i = 0; i < this.table.length; i++) {
+        //     if (this.table[i] !== undefined) {
+        //         count++;
+        //         console.log(this.table[i], count);
+        //     }
+        // }
+        // return count;
     } 
 
     clear() {
         // removes all entries in the hash map.
+        this.map = [];
     } 
 
     keys() {
         // returns an array containing all the keys inside the hash map.
+        let array = [];
+        for (let i = 0; i < this.map.length; i++) {
+            array.push(this.map[i][0]);
+        }
+        return array;
     } 
 
     values() {
         // returns an array containing all the values.
+        let array = [];
+        for (let i = 0; i < this.map.length; i++) {
+            array.push(this.map[i][1]);
+        }
+        return array;
     } 
 
     entries() {
         // returns an array that contains each key, value pair. Example: [[firstKey, firstValue], [secondKey, secondValue]] 
+        let array = [];
+        for (let i = 0; i < this.table.length; i++) {
+            if (this.table[i] !== undefined) {
+                array.push(this.table[i]);
+            }
+        }
+        return array;
     } 
 }
+

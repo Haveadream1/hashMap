@@ -1,3 +1,9 @@
+function checkIndex(index, capacity) {
+    if (index < 0 || index >= capacity) {
+        throw new Error('Trying to access ndex out of bounds');
+    }
+}
+
 export default class HashMap {
     constructor(capacity = 16) {
         this.loadFactor = 0.75;
@@ -21,6 +27,7 @@ export default class HashMap {
         // If a key already exists, then the old value is overwritten, and we can say that we update the key’s value
 
         const index = this.hash(key);
+        checkIndex(index, this.capacity);
         this.table[index] = value;
     } 
 
@@ -80,6 +87,7 @@ export default class HashMap {
         for (let i = 0; i < this.table.length; i++) {
             if (this.table[i] !== null && this.table[i] !== undefined) {
                 let index = this.hash(this.table[i]);
+                checkIndex(index, this.capacity);
                 array.push(index);
             }
         }
@@ -103,6 +111,7 @@ export default class HashMap {
         for (let i = 0; i < this.table.length; i++) {
             if (this.table[i] !== null && this.table[i] !== undefined) {
                 let index = this.hash(this.table[i]);
+                checkIndex(index, this.capacity);
                 array.push(`[${index}, ${this.table[i]}]`);
             }
         }
